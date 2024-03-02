@@ -1,1 +1,11 @@
 sitename: "Sassi site"
+siteurl: "https://sourcenode.duckdns.org"
+gitrepo: "https://github.com/username/repo"
+language: en
+
+
+navbar:
+  - name: Home
+    url:  index.html
+  - name: About
+    url: about.html
