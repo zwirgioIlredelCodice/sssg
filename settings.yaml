@@ -1,11 +1,11 @@
 sitename: "Sassi site"
-siteurl: "http://localhost"
+siteurl: "http://0.0.0.0"
 gitrepo: "https://github.com/username/repo"
 language: en
 
 
 navbar:
   - name: Home
-    url:  index.html
+    url:  .
   - name: About
-    url: about.html
+    url: about

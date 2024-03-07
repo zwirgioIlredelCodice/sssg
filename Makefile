@@ -5,7 +5,7 @@ SOURCEDIR = source
 THEMEDIR = theme
 
 SOURCES := $(shell find $(SOURCEDIR) -name '*.md')
-HTMLs := $(addprefix $(TARGETDIR)/,$(SOURCES:%.md=%.html))
+HTMLs := $(addprefix $(TARGETDIR)/,$(patsubst index/index.html,index.html,$(addsuffix /index.html,$(basename $(SOURCES:$(SOURCEDIR)/%.md=%.html)))))
 
 all: setupdirs copy_resources $(HTMLs)
 
@@ -16,12 +16,15 @@ copy_resources:
 	cp -r -u $(RESOURCEDIR) $(TARGETDIR)
 	cp -r -u $(THEMEDIR)/$(RESOURCEDIR) $(TARGETDIR)
 
-$(TARGETDIR)/%.html: %.md
+$(HTMLs): $(SOURCES)
 	mkdir -p $(@D)
 	pandoc -t html5 --standalone --template $(THEMEDIR)/base.html --metadata-file settings.yaml $^ -o $@
 
+db:
+	$(info $(HTMLs))
+
 serve:
-	python3 -m http.server 8080 -d $(TARGETDIR)
+	python3 -m http.server 80 -d $(TARGETDIR)
 
 clean: 
 	rm -rf $(TARGETDIR)
