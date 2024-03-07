@@ -1,11 +1,11 @@
 RESOURCEDIR = resources
 TARGETDIR = build
-
+SOURCEDIR = source
 # theme stuff
 THEMEDIR = theme
 
-SOURCES := $(wildcard source/**/*.md)
-HTMLs := $(patsubst source/%.md,build/%.html,$(SOURCES))
+SOURCES := $(shell find $(SOURCEDIR) -name '*.md')
+HTMLs := $(addprefix $(TARGETDIR)/,$(SOURCES:%.md=%.html))
 
 all: setupdirs copy_resources $(HTMLs)
 
@@ -16,7 +16,7 @@ copy_resources:
 	cp -r -u $(RESOURCEDIR) $(TARGETDIR)
 	cp -r -u $(THEMEDIR)/$(RESOURCEDIR) $(TARGETDIR)
 
-build/%.html: source/%.md 
+$(TARGETDIR)/%.html: %.md
 	mkdir -p $(@D)
 	pandoc -t html5 --standalone --template $(THEMEDIR)/base.html --metadata-file settings.yaml $^ -o $@
 
