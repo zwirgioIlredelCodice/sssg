@@ -1,5 +1,5 @@
 sitename: "Sassi site"
-siteurl: "http://0.0.0.0"
+siteurl: "http://0.0.0.0:8080"
 gitrepo: "https://github.com/username/repo"
 language: en
 
