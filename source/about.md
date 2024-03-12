@@ -3,10 +3,6 @@ title: About
 ---
 
 
-# cosa e questo??
+# What is this??
 
-lezzo rezzo mezzo
-
-```c
-int a = 0;
-```
+lezzo rezzo mezzo, is my own stupid static site generator
