@@ -19,11 +19,11 @@ copy_resources: $(RESOURCES) # TODO: dependencies not working
 	cp -r -u $(THEMEDIR)/$(RESOURCEDIR) $(TARGETDIR)
 
 $(TARGETDIR)/index.html: $(SOURCEDIR)/index.md $(THEMEDIR)/* 
-	pandoc -t html5 --standalone --template $(THEMEDIR)/base.html --metadata-file settings.yaml $< -o $@
+	pandoc -t html5 --standalone --mathml --template $(THEMEDIR)/base.html --metadata-file settings.yaml $< -o $@
 
 $(HTMLs): $(TARGETDIR)/%/index.html: $(SOURCEDIR)/%.md $(THEMEDIR)/*
 	mkdir -p $(@D)
-	pandoc -t html5 --standalone --template $(THEMEDIR)/base.html --metadata-file settings.yaml $< -o $@
+	pandoc -t html5 --standalone --mathml --template $(THEMEDIR)/base.html --metadata-file settings.yaml $< -o $@
 
 serve:
 	python3 -m http.server 8080 -d $(TARGETDIR)
