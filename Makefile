@@ -9,28 +9,38 @@ THEMEDIR = theme
 TESTINGURL := http://0.0.0.0:8080
 
 SOURCES := $(filter-out $(SOURCEDIR)/index.md,$(shell find $(SOURCEDIR) -name '*.md'))
+
 HTMLS-RELEASE := $(addprefix $(RELEASEDIR)/,$(addsuffix /index.html,$(basename $(SOURCES:$(SOURCEDIR)/%.md=%.html))))
 HTMLS-TESTING := $(addprefix $(TESTINGDIR)/,$(addsuffix /index.html,$(basename $(SOURCES:$(SOURCEDIR)/%.md=%.html))))
-RESOURCES := $(shell find $(RESOURCEDIR) $(THEMEDIR)/$(RESOURCEDIR) -not -type d)
+RESOURCES_THEME_IN := $(shell find $(THEMEDIR)/$(RESOURCEDIR) -not -type d)
+RESOURCES_BASE_IN := $(shell find $(RESOURCEDIR) -not -type d)
+RESOURCES_THEME_OUT_RELEASE := $(RESOURCES_THEME_IN:$(THEMEDIR)/%=$(RELEASEDIR)/%)
+RESOURCES_THEME_OUT_TESTING := $(RESOURCES_THEME_IN:$(THEMEDIR)/%=$(TESTINGDIR)/%)
+RESOURCES_BASE_OUT_RELEASE := $(RESOURCES_BASE_IN:%=$(RELEASEDIR)/%)
+RESOURCES_BASE_OUT_TESTING := $(RESOURCES_BASE_IN:%=$(TESTINGDIR)/%)
 
 PANDOC-BASE-ARGS := -t html5 --standalone --mathml --template $(THEMEDIR)/base.html --metadata-file settings.yaml
 PANDOC-TESTING-ARGS := $(PANDOC-BASE-ARGS) --metadata=siteurl:"$(TESTINGURL)"
 
-release: setupdirs copy_resources $(HTMLS-RELEASE) $(RELEASEDIR)/index.html
+release: $(RESOURCES_THEME_OUT_RELEASE) $(RESOURCES_BASE_OUT_RELEASE) $(HTMLS-RELEASE) $(RELEASEDIR)/index.html
 
-testing: setupdirs copy_resources $(HTMLS-TESTING) $(TESTINGDIR)/index.html
+testing: $(RESOURCES_THEME_OUT_TESTING) $(RESOURCES_BASE_OUT_TESTING) $(HTMLS-TESTING) $(TESTINGDIR)/index.html
 
-setupdirs:
-	mkdir -p $(OUTDIR)
-	mkdir -p $(RELEASEDIR)
-	mkdir -p $(TESTINGDIR)
+$(RESOURCES_THEME_OUT_RELEASE): $(RELEASEDIR)/%: $(THEMEDIR)/%
+	mkdir -p $(@D)
+	cp $< $@
 
-copy_resources: $(RESOURCES) # TODO: dependencies not working
-	cp -r -u $(RESOURCEDIR) $(RELEASEDIR)
-	cp -r -u $(THEMEDIR)/$(RESOURCEDIR) $(RELEASEDIR)
-	
-	cp -r -u $(RESOURCEDIR) $(TESTINGDIR)
-	cp -r -u $(THEMEDIR)/$(RESOURCEDIR) $(TESTINGDIR)
+$(RESOURCES_THEME_OUT_TESTING): $(TESTINGDIR)/%: $(THEMEDIR)/%
+	mkdir -p $(@D)
+	cp $< $@
+
+$(RESOURCES_BASE_OUT_RELEASE): $(RELEASEDIR)/%: %
+	mkdir -p $(@D)
+	cp $< $@
+
+$(RESOURCES_BASE_OUT_TESTING): $(TESTINGDIR)/%: %
+	mkdir -p $(@D)
+	cp $< $@
 
 $(RELEASEDIR)/index.html: $(SOURCEDIR)/index.md $(THEMEDIR)/* 
 	pandoc $(PANDOC-BASE-ARGS) $< -o $@
