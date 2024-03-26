@@ -56,7 +56,7 @@ $(HTMLS-TESTING): $(TESTINGDIR)/%/index.html: $(SOURCEDIR)/%.md $(THEMEDIR)/*
 	mkdir -p $(@D)
 	pandoc $(PANDOC-TESTING-ARGS) $< -o $@
 
-serve:
+serve: testing
 	python3 -m http.server 8080 -d $(TESTINGDIR)
 
 clean: 
